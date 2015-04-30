@@ -1,11 +1,11 @@
-var dgram  	= require('dgram');
-
 var ws      = require('ws').Server;
 var wss     = new ws({port:8080});
 
+//////////////////////////////////////////////////
 // pubsub
-var client = dgram.createSocket("udp4");
-var server = dgram.createSocket("udp4");
+var dgram   = require('dgram');
+var client  = dgram.createSocket("udp4");
+var server  = dgram.createSocket("udp4");
 
 var clients = [];
 server.on("message", function (message, rinfo) {
@@ -14,7 +14,8 @@ server.on("message", function (message, rinfo) {
     // broadcast server
     for (var key in clients) {
         if (key !== tag) {
-            client.send(message, 0, message.length, clients[key].port, clients[key].addr);
+            client.send(message, 0, message.length,
+                        clients[key].port, clients[key].addr);
         }
     }
     console.log(message);
@@ -23,12 +24,11 @@ server.on("message", function (message, rinfo) {
 
 server.bind(7777);
 
-
+//////////////////////////////////////////////////
 // websock
-// connection
+// event connection/message/disconnect
 wss.on('connection', function(socket) {
     console.log("client connected:");
-    //console.log(socket);
     // recieve message
     socket.on('message', function(message) {
         client.send(message, 0, message.length, 7777, "instance-1");
@@ -36,10 +36,10 @@ wss.on('connection', function(socket) {
     // disconnect
     socket.on('disconnect', function() {
         console.log("client disconnected:");
-        //console.log(socket);
     });
 });
 
+// do broadcast
 wss.broadcast = function(data) {
     var data_j = JSON.stringify(data);
     wss.clients.forEach(function(client) {
