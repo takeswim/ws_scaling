@@ -1,0 +1,12 @@
+{
+    "name"      : "WEBSOCK-PUBSUB",
+    "version"   : "0.0.1",
+    "private"   : true,
+    "scripts"   : {
+        "start" : "node app.js"
+    },
+    "dependencies": {
+        "redis"	: "latest",
+        "ws" 	: "latest"
+    }
+}
